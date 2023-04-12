@@ -1,10 +1,11 @@
 import os
-import shutil, tarfile
-import sys
+import shutil
 from os import path
 import re
+from threading import Thread, Semaphore
+import logging
 
-path_root = os.path.join(sys.argv[1])
+path_root = os.path.join("C:/Users/Руслан/Desktop/мотлох")
 
 def create_directory(path_1):
     folder_name = ['images','video','documents','audio','archives','other']
@@ -15,7 +16,8 @@ def create_directory(path_1):
             os.makedirs(path_dir)
             
 
-def sort_files(path_1):    
+
+def sort_files(path_1):
     folder_name = ['images','video','documents','audio','archives','other']
     suf_unknow = []
     suf_know = []
@@ -36,7 +38,7 @@ def sort_files(path_1):
                 if '.png' in files or '.jpeg' in files or '.jpg' in files or '.svg' in files:
                     shutil.move(path_dir, path_images)
                     x, y = path.splitext(files)
-                    suf_know.append(y) 
+                    suf_know.append(y)
                 elif '.avi' in files or '.mp4' in files or '.mov' in files or '.mkv' in files:
                     shutil.move(path_dir, path_video)
                     x, y = path.splitext(files)
@@ -61,7 +63,7 @@ def sort_files(path_1):
                     suf_unknow.append(m)
             else:
                 continue
-        
+
     print(f'images - {os.listdir(path_images)}')
     print(f'video - {os.listdir(path_video)}')
     print(f'documents - {os.listdir(path_documents)}')
@@ -97,7 +99,13 @@ def normalize(path_1):
         else:
             normalize(path_file)
 
-
-create_directory(sys.argv[1])
-normalize(sys.argv[1])
-sort_files(sys.argv[1])
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG, format='%(threadName)s %(message)s')
+    create_directory("C:/Users/Руслан/Desktop/мотлох")
+    normalize("C:/Users/Руслан/Desktop/мотлох")
+    sort_files("C:/Users/Руслан/Desktop/мотлох")
+    pool = Semaphore(2)
+    for directoria in path_root:
+        thread = Thread(args=(pool, ))
+        thread.start()
+#sys.argv[1]
